@@ -35,6 +35,20 @@
         button:hover {
             background-color: #aa1515;
         }
+
+        #responseMessage {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .failure {
+            color: red;
+        }
+
     </style>
 </head>
 <body>
@@ -43,6 +57,7 @@
 
 <input type="file" id="csvFile" accept=".csv">
 <button id="uploadButton" onclick="handleButtonClick()">Import CSV</button>
+<div id="responseMessage"></div>
 
 <script>
     function handleButtonClick() {
@@ -65,7 +80,7 @@
         const csvFile = $('#csvFile')[0].files[0];
 
         if (!csvFile) {
-            alert("Please choose a CSV file first.");
+            displayResponse('Please choose a CSV file first.', 'failure');
             return;
         }
 
@@ -82,15 +97,22 @@
             processData: false,
             contentType: false,
             success: function(data) {
-                alert('File uploaded successfully!');
+                displayResponse(data, 'success');
                 // Reset the button and input for potential next upload
                 $('#uploadButton').text('Import CSV');
                 $('#csvFile').val('');
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                alert('Failed to upload file. ' + errorThrown);
+                displayResponse(errorThrown, 'failure');
             }
         });
+    }
+
+    function displayResponse(message, type) {
+        const responseMessage = $('#responseMessage');
+        responseMessage.removeClass('success failure');
+        responseMessage.addClass(type);
+        responseMessage.text(message);
     }
 </script>
 
