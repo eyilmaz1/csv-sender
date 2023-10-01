@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send CSV File</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            text-align: center;
+            padding: 50px;
+        }
+
+        h1 {
+            margin-bottom: 50px;
+        }
+
+        #csvFile {
+            display: none;
+        }
+
+        button {
+            background-color: #e01e1e;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #aa1515;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Preemptive PDU Boarding</h1>
+
+<input type="file" id="csvFile" accept=".csv">
+<button id="uploadButton" onclick="handleButtonClick()">Import CSV</button>
+
+<script>
+    function handleButtonClick() {
+        const csvFileInput = $('#csvFile')[0];
+
+        // If no file is chosen yet
+        if (!csvFileInput.files[0]) {
+            csvFileInput.click();
+            csvFileInput.addEventListener('change', () => {
+                if (csvFileInput.files[0]) {
+                    $('#uploadButton').text('Send CSV');
+                }
+            });
+        } else {
+            sendCSV();
+        }
+    }
+
+    function sendCSV() {
+        const csvFile = $('#csvFile')[0].files[0];
+
+        if (!csvFile) {
+            alert("Please choose a CSV file first.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', csvFile);
+
+        $.ajax({
+            url: 'YOUR_API_ENDPOINT_URL_HERE',
+            type: 'POST',
+            data: formData,
+            headers: {
+                'API-KEY': 'YOUR_API_KEY_HERE'
+            },
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                alert('File uploaded successfully!');
+                // Reset the button and input for potential next upload
+                $('#uploadButton').text('Import CSV');
+                $('#csvFile').val('');
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('Failed to upload file. ' + errorThrown);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
